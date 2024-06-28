@@ -9,7 +9,7 @@ namespace SoftUni
         public static void Main()
         {
             var context = new SoftUniContext();
-            Console.WriteLine(GetLatestProjects(context));
+            Console.WriteLine(GetEmployeesByFirstNameStartingWithSa(context));
         }
 
         //01
@@ -248,5 +248,53 @@ namespace SoftUni
             return sb.ToString();
         }
 
+        //09
+
+        public static string IncreaseSalaries(SoftUniContext context)
+        {
+            var employeesUpdate = context.Employees
+                .Where(e => e.Department.Name == "Engineering" || e.Department.Name == "Tool Design"
+                || e.Department.Name == "Marketing" || e.Department.Name == "Information Services")
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToList();
+
+            var sb = new StringBuilder();
+
+            foreach (var employee in employeesUpdate)
+            {
+                employee.Salary = employee.Salary * 1.12m;
+                sb.AppendLine($"{employee.FirstName} {employee.LastName} (${employee.Salary:F2})");
+            }
+
+            return sb.ToString();
+        }
+
+        //10
+
+        public static string GetEmployeesByFirstNameStartingWithSa(SoftUniContext context)
+        {
+            var employees = context.Employees
+                .Where(e => e.FirstName.StartsWith("Sa"))
+                .Select(e => new
+                {
+                    e.FirstName,
+                    e.LastName,
+                    e.JobTitle,
+                    e.Salary
+                })
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToArray();
+
+            var sb = new StringBuilder();
+
+            foreach (var emp in employees)
+            {
+                sb.AppendLine($"{emp.FirstName} {emp.LastName} - {emp.JobTitle} - (${emp.Salary:F2})");
+            }
+
+            return sb.ToString().Trim();
+        }
     }
 }
