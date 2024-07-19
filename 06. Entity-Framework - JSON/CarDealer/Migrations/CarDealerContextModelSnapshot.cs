@@ -43,7 +43,7 @@ namespace CarDealer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cars");
+                    b.ToTable("Cars", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.Customer", b =>
@@ -66,7 +66,7 @@ namespace CarDealer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.Part", b =>
@@ -94,7 +94,7 @@ namespace CarDealer.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Parts");
+                    b.ToTable("Parts", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.PartCar", b =>
@@ -109,7 +109,7 @@ namespace CarDealer.Migrations
 
                     b.HasIndex("PartId");
 
-                    b.ToTable("PartsCars");
+                    b.ToTable("PartsCars", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.Sale", b =>
@@ -135,7 +135,7 @@ namespace CarDealer.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.Supplier", b =>
@@ -155,7 +155,7 @@ namespace CarDealer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("CarDealer.Models.Part", b =>

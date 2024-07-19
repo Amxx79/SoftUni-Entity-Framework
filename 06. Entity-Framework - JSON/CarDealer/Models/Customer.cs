@@ -1,7 +1,11 @@
-﻿namespace CarDealer.Models
+﻿using Castle.Components.DictionaryAdapter;
+using System.Text.Json.Serialization;
+
+namespace CarDealer.Models
 {
     public class Customer
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public int Id { get; set; }
 
         public string Name { get; set; } = null!;
@@ -10,6 +14,8 @@
 
         public bool IsYoungDriver { get; set; }
 
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public ICollection<Sale> Sales { get; set; } = new List<Sale>(); 
     }
 }
