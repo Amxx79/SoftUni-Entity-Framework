@@ -30,7 +30,7 @@ namespace CarDealer
             //var json = File.ReadAllText("../../../Datasets/cars.json");
             //Console.WriteLine(ImportSuppliers(context, json));
 
-            //04
+            ////04
             //var json = File.ReadAllText("../../../Datasets/cars.json");
             //Console.WriteLine(ImportCars(context, json));
 
@@ -43,7 +43,7 @@ namespace CarDealer
             //var json = File.ReadAllText("../../../Datasets/sales.json");
             //Console.WriteLine(ImportSales(context, json));
 
-            Console.WriteLine(GetCarsFromMakeToyota(context));
+            Console.WriteLine(GetSalesWithAppliedDiscount(context));
         }
 
         //01
@@ -142,14 +142,14 @@ namespace CarDealer
                 .Select(c => new CustomerExportDto()
                 {
                     Name = c.Name,
-                    BirthDate= c.BirthDate,
+                    BirthDate = c.BirthDate,
                     IsYoungDriver = c.IsYoungDriver,
                 });
 
-                foreach (var customer in allCustomers)
-                {
-                    customer.BirthDate.ToShortDateString();
-                }
+            foreach (var customer in allCustomers)
+            {
+                customer.BirthDate.ToShortDateString();
+            }
 
             var jsonSettings = new JsonSerializerSettings()
             {
@@ -163,6 +163,7 @@ namespace CarDealer
             return json;
         }
 
+        //07
         public static string GetCarsFromMakeToyota(CarDealerContext context)
         {
             var allCars = context.Cars
@@ -183,5 +184,92 @@ namespace CarDealer
             return json;
         }
 
+        //08
+        public static string GetLocalSuppliers(CarDealerContext context)
+        {
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                DateFormatString = "dd-MM-yyyy",
+            };
+
+            var supp = context.Suppliers.Where(s => !s.IsImporter)
+                .Select(s => new
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    PartsCount = s.Parts.Count(),
+                })
+                .ToArray();
+
+            return JsonConvert.SerializeObject(supp, jsonSettings);
+        }
+
+        //09
+        public static string GetCarsWithTheirListOfParts(CarDealerContext context)
+        {
+            var cars = context.Cars
+                .Select(c => new
+                {
+                    car = new
+                    {
+                        c.Make,
+                        c.Model,
+                        c.TraveledDistance
+                    },
+                    parts = c.PartsCars.Select(p => new
+                    {
+                        Name = p.Part.Name,
+                        Price = p.Part.Price.ToString("f2"),
+                    })
+                    .ToArray(),
+                })
+                .ToArray();
+
+            var json = JsonConvert.SerializeObject(cars, Formatting.Indented);
+
+            return json;
+        }
+
+        //10
+        public static string GetTotalSalesByCustomer(CarDealerContext context)
+        {
+            var customers = context.Customers
+                .Where(c => c.Sales.Count > 0)
+                .Select(cs => new
+                {
+                    fullName = cs.Name,
+                    boughtCars = cs.Sales.Count,
+                    spentMoney = cs.Sales.Sum(c => c.Car.PartsCars.Sum(c => c.Part.Price)),
+                })
+                .OrderByDescending(c => c.spentMoney)
+                .ThenByDescending(c => c.boughtCars)
+                .ToList();
+
+            return JsonConvert.SerializeObject(customers, Formatting.Indented);
+        }
+
+        public static string GetSalesWithAppliedDiscount(CarDealerContext context)
+        {
+            var sales = context.Sales
+                .Take(10)
+                .Select(s => new
+                {
+                    car = new
+                    {
+                        Make = s.Car.Make,
+                        Model = s.Car.Model,
+                        TraveledDistance = s.Car.TraveledDistance,
+                    },
+                    customerName = s.Customer.Name,
+                    discount = s.Discount.ToString("f2"),
+                    price = s.Car.PartsCars.Sum(pc => pc.Part.Price).ToString("F2"),
+                    priceWithDiscount = (s.Car.PartsCars.Sum(pc => pc.Part.Price) * (1 - s.Discount / 100))
+                    .ToString("F2")
+                });
+
+            return JsonConvert.SerializeObject(sales, Formatting.Indented);
+        }
     }
 }
