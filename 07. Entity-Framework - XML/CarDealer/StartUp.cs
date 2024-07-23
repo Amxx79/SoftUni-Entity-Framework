@@ -132,5 +132,32 @@ namespace CarDealer
 
             return $"Successfully imported {cars.Count}";
         }
+
+        public static string ImportCustomers(CarDealerContext context, string inputXml)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(CustomerImportDto[]),
+       new XmlRootAttribute("Customer"));
+
+           CustomerImportDto[] customerDtos;
+
+            using (var reader = new StringReader(inputXml))
+            {
+                customerDtos = (CustomerImportDto[])xmlSerializer.Deserialize(reader);
+            }
+
+            Customer[] customers = customerDtos
+                .Select(c => new Customer
+                {
+                    Name = c.Name,
+                    BirthDate = c.BirthDate,
+                    IsYoungDriver = c.IsYoungDriver,
+                })
+                .ToArray();
+
+            context.Customers.AddRange(customers);
+            context.SaveChanges();
+
+            return $"Successfully imported {customers.Length}";
+        }
     }
 }
