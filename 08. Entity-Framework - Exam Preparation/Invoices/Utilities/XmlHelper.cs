@@ -36,7 +36,7 @@ namespace Invoices.Utilities
             nameSpaces.Add(string.Empty, string.Empty);
 
             using StringWriter writer = new StringWriter(sb);
-            xmlSerializer.Serialize(writer, obj);
+            xmlSerializer.Serialize(writer, obj, nameSpaces);
 
             return sb.ToString().Trim();
         }
