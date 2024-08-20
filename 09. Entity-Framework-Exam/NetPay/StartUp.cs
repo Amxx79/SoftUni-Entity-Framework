@@ -14,9 +14,9 @@ namespace NetPay
             var projectDir = GetProjectDirectory();
 
             ImportEntities(context, projectDir + @"Datasets/", projectDir + @"ImportResults/");
-            //ExportEntities(context, projectDir + @"ExportResults/");
+            ExportEntities(context, projectDir + @"ExportResults/");
 
-            using(var transaction = context.Database.BeginTransaction())
+            using (var transaction = context.Database.BeginTransaction())
             {
                 transaction.Rollback();
             }
@@ -43,11 +43,11 @@ namespace NetPay
             Console.WriteLine(HouseholdsHavingExpensesToPayWithAllUnpaidExpences);
             File.WriteAllText(exportDir + "Actual-Result-ExportHouseholds.xml", HouseholdsHavingExpensesToPayWithAllUnpaidExpences);
 
-            var ServicesWithSuppliers =
-                DataProcessor.Serializer.ExportAllServicesWithSuppliers(context);
+            //var ServicesWithSuppliers =
+            //    DataProcessor.Serializer.ExportAllServicesWithSuppliers(context);
 
-            Console.WriteLine(ServicesWithSuppliers);
-            File.WriteAllText(exportDir + "Actual-Result-ExportServicesWithSuppliers.json", ServicesWithSuppliers);
+            //Console.WriteLine(ServicesWithSuppliers);
+            //File.WriteAllText(exportDir + "Actual-Result-ExportServicesWithSuppliers.json", ServicesWithSuppliers);
         }
 
         private static void PrintAndExportEntityToFile(string entityOutput, string outputPath)
